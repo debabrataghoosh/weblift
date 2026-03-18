@@ -182,7 +182,6 @@ export default function HomePage() {
                 <PricingCard
                   title={plan.title}
                   subtitle={plan.subtitle}
-                  valueProposition={plan.valueProposition}
                   price={plan.price}
                   priceLabel={plan.priceLabel}
                   description={plan.description}
