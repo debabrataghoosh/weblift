@@ -12,7 +12,7 @@ export default function SectionTitle({
   return (
     <div className="mb-14 max-w-3xl">
       {eyebrow ? (
-        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-indigo-600">
+        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600">
           {eyebrow}
         </p>
       ) : null}

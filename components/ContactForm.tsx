@@ -25,7 +25,7 @@ export default function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="card mx-auto max-w-2xl space-y-5 border-slate-200 bg-white p-6 shadow-xl shadow-indigo-100/70 sm:p-8"
+      className="card mx-auto max-w-2xl space-y-5 border-slate-200 bg-white p-6 sm:p-8"
     >
       <div>
         <label htmlFor="name" className="mb-2 block text-sm font-medium text-slate-700">
