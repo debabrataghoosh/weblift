@@ -1,21 +1,18 @@
 type PricingCardProps = {
   title: string;
   subtitle?: string;
-  valueProposition?: string;
   price: string;
   priceLabel?: string;
   description?: string;
   features: string[];
   highlighted?: boolean;
   badge?: string;
-
-  bonus?: string;
+  buttonText?: string;
 };
 
 export default function PricingCard({
   title,
   subtitle,
-  valueProposition,
   price,
   priceLabel,
   description,
