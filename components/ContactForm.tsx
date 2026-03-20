@@ -5,21 +5,41 @@ import { FormEvent, useState } from 'react';
 export default function ContactForm() {
   const [statusMessage, setStatusMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const destinationEmail = 'hello@webliftstore.in';
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
-    setStatusMessage('Sending your message...');
+    setStatusMessage('Preparing your message...');
 
     const form = event.currentTarget;
+    const formData = new FormData(form);
+    const name = String(formData.get('name') ?? '');
+    const email = String(formData.get('email') ?? '');
+    const businessType = String(formData.get('businessType') ?? '');
+    const message = String(formData.get('message') ?? '');
+
+    const subject = encodeURIComponent(`New website inquiry from ${name || 'Website visitor'}`);
+    const body = encodeURIComponent(
+      [
+        `Name: ${name}`,
+        `Email: ${email}`,
+        `Business Type: ${businessType}`,
+        '',
+        'Message:',
+        message
+      ].join('\n')
+    );
 
     await new Promise((resolve) => {
       setTimeout(resolve, 900);
     });
 
+    window.location.href = `mailto:${destinationEmail}?subject=${subject}&body=${body}`;
+
     form.reset();
     setIsSubmitting(false);
-    setStatusMessage('Thanks! Your message has been sent. WebLift will contact you soon.');
+    setStatusMessage('Your email app opened with your message addressed to WebLift.');
   };
 
   return (
