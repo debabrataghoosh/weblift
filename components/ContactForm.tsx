@@ -3,18 +3,6 @@
 import { FormEvent, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-type RazorpayInstance = {
-  open: () => void;
-};
-
-type RazorpayConstructor = new (options: Record<string, unknown>) => RazorpayInstance;
-
-declare global {
-  interface Window {
-    Razorpay?: RazorpayConstructor;
-  }
-}
-
 export default function ContactForm() {
   const searchParams = useSearchParams();
   const selectedPlan = searchParams.get('plan') ?? '';
@@ -23,89 +11,18 @@ export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentOption, setPaymentOption] = useState('pay_later');
   const [showQrFallback, setShowQrFallback] = useState(false);
-  const destinationEmail = 'hello@webliftstore.in';
 
-  const openRazorpayCheckout = async (params: {
-    plan: string;
-    name: string;
-    email: string;
-    phone: string;
-    businessName: string;
-    businessType: string;
-    timeline: string;
-    pagesNeeded: string;
-    budget: string;
-    keyRequirements: string;
-    message: string;
-  }) => {
-    const orderResponse = await fetch('/api/razorpay/order', {
+  const submitInquiry = async (payload: FormData) => {
+    const response = await fetch('/api/contact', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ plan: params.plan })
+      body: payload
     });
 
-    const orderData = (await orderResponse.json()) as {
-      keyId?: string;
-      orderId?: string;
-      amount?: number;
-      currency?: string;
-      error?: string;
-    };
+    const result = (await response.json()) as { ok?: boolean; error?: string };
 
-    if (!orderResponse.ok || !orderData.keyId || !orderData.orderId || !orderData.amount || !orderData.currency) {
-      throw new Error(orderData.error || 'Unable to initialize payment.');
+    if (!response.ok || !result.ok) {
+      throw new Error(result.error || 'Unable to submit form.');
     }
-
-    if (!window.Razorpay) {
-      await new Promise<void>((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error('Failed to load Razorpay checkout.'));
-        document.body.appendChild(script);
-      });
-    }
-
-    if (!window.Razorpay) {
-      throw new Error('Razorpay checkout is unavailable.');
-    }
-
-    const razorpay = new window.Razorpay({
-      key: orderData.keyId,
-      amount: orderData.amount,
-      currency: orderData.currency,
-      name: 'WebLift',
-      description: `${params.plan} Website Package`,
-      order_id: orderData.orderId,
-      prefill: {
-        name: params.name,
-        email: params.email,
-        contact: params.phone.replace(/\D/g, '')
-      },
-      notes: {
-        plan: params.plan,
-        businessName: params.businessName,
-        businessType: params.businessType,
-        timeline: params.timeline,
-        pagesNeeded: params.pagesNeeded,
-        budget: params.budget,
-        keyRequirements: params.keyRequirements,
-        message: params.message
-      },
-      theme: {
-        color: '#34d399'
-      },
-      handler: () => {
-        setStatusMessage('Payment completed. Our team will contact you shortly.');
-      },
-      modal: {
-        ondismiss: () => setIsSubmitting(false)
-      }
-    });
-
-    razorpay.open();
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -134,79 +51,43 @@ export default function ContactForm() {
         : 'Not provided';
     const message = String(formData.get('message') ?? '');
 
-    if (isPackageInquiry && paymentOption === 'razorpay') {
-      try {
-        setStatusMessage('Opening Razorpay checkout...');
-        await openRazorpayCheckout({
-          plan,
-          name,
-          email,
-          phone,
-          businessName,
-          businessType,
-          timeline,
-          pagesNeeded,
-          budget,
-          keyRequirements,
-          message
-        });
-      } catch (error) {
-        const paymentError = error instanceof Error ? error.message : 'Unable to start payment.';
-        setStatusMessage(paymentError);
+    try {
+      const payload = new FormData();
+      payload.append('inquiryType', isPackageInquiry ? 'Package Inquiry' : 'General Contact');
+      payload.append('plan', plan);
+      payload.append('name', name);
+      payload.append('email', email);
+      payload.append('phone', phone);
+      payload.append('businessName', businessName);
+      payload.append('businessType', businessType);
+      payload.append('timeline', timeline);
+      payload.append('pagesNeeded', pagesNeeded);
+      payload.append('budget', budget);
+      payload.append('keyRequirements', keyRequirements);
+      payload.append('paymentOption', paymentOption);
+      payload.append('paymentTransactionRef', paymentTransactionRef);
+      payload.append('message', message);
+
+      if (paymentScreenshot instanceof File && paymentScreenshot.size > 0) {
+        payload.append('paymentScreenshot', paymentScreenshot);
       }
+
+      payload.append('paymentStatus', paymentOption === 'qr' ? 'pending_verification' : 'pending');
+
+      await submitInquiry(payload);
+
+      form.reset();
+      setPaymentOption('pay_later');
+      setShowQrFallback(false);
+      setStatusMessage(
+        'Form submitted successfully. We will contact you soon.'
+      );
+    } catch (error) {
+      const submitError = error instanceof Error ? error.message : 'Unable to submit form.';
+      setStatusMessage(submitError);
+    } finally {
       setIsSubmitting(false);
-      return;
     }
-
-    const subject = encodeURIComponent(
-      isPackageInquiry
-        ? `Package inquiry (${plan || 'Selected package'}) from ${name || 'Website visitor'}`
-        : `New website inquiry from ${name || 'Website visitor'}`
-    );
-
-    const body = encodeURIComponent(
-      isPackageInquiry
-        ? [
-            `Inquiry Type: Package Inquiry`,
-            `Selected Package: ${plan}`,
-            `Name: ${name}`,
-            `Email: ${email}`,
-            `Phone: ${phone}`,
-            `Business Name: ${businessName}`,
-            `Business Type: ${businessType}`,
-            `Timeline: ${timeline}`,
-            `Estimated Budget: ${budget}`,
-            `Pages Needed: ${pagesNeeded}`,
-            `Payment Option: ${paymentOption === 'razorpay' ? 'Razorpay' : paymentOption === 'qr' ? 'QR Payment' : 'Pay Later'}`,
-            `Payment Transaction Ref: ${paymentTransactionRef || 'Not provided yet'}`,
-            `Payment Screenshot: ${paymentOption === 'qr' ? paymentScreenshotName : 'N/A'}`,
-            '',
-            'Required Features:',
-            keyRequirements,
-            '',
-            'Additional Message:',
-            message
-          ].join('\n')
-        : [
-            `Inquiry Type: General Contact`,
-            `Name: ${name}`,
-            `Email: ${email}`,
-            `Business Type: ${businessType}`,
-            '',
-            'Message:',
-            message
-          ].join('\n')
-    );
-
-    await new Promise((resolve) => {
-      setTimeout(resolve, 900);
-    });
-
-    window.location.href = `mailto:${destinationEmail}?subject=${subject}&body=${body}`;
-
-    form.reset();
-    setIsSubmitting(false);
-    setStatusMessage('Your email app opened with your message addressed to WebLift.');
   };
 
   return (
@@ -385,7 +266,6 @@ export default function ContactForm() {
               onChange={(event) => setPaymentOption(event.target.value)}
             >
               <option value="pay_later">Pay later (discuss first)</option>
-              <option value="razorpay">Pay now with Razorpay</option>
               <option value="qr">Pay via QR</option>
             </select>
           </div>
@@ -433,7 +313,7 @@ export default function ContactForm() {
                   required={paymentOption === 'qr'}
                 />
                 <p className="mt-1 text-xs text-slate-500">
-                  Upload screenshot here, then attach it in the email before sending.
+                  Upload screenshot here. It will be sent directly with your form submission.
                 </p>
               </div>
             </div>
