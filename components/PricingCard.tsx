@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 type PricingCardProps = {
   title: string;
   subtitle?: string;
@@ -68,13 +70,16 @@ export default function PricingCard({
           </div>
         </div>
 
-        <button className={`w-full rounded-full py-3 text-sm font-semibold transition duration-300 ${
+        <Link
+          href={`/contact?plan=${encodeURIComponent(title)}`}
+          className={`block w-full rounded-full py-3 text-center text-sm font-semibold transition duration-300 ${
           highlighted
             ? 'bg-gradient-to-r from-emerald-400 to-green-400 text-slate-900 hover:shadow-lg hover:shadow-emerald-500/40 hover:scale-105 active:scale-95'
             : 'bg-gradient-to-r from-emerald-400 to-green-400 text-slate-900 hover:shadow-lg hover:shadow-emerald-500/40 hover:scale-105 active:scale-95'
-        }`}>
+        }`}
+        >
           {buttonText}
-        </button>
+        </Link>
       </div>
     </div>
   );

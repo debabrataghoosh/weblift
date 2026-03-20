@@ -7,7 +7,11 @@ import FloatingWhatsApp from '@/components/FloatingWhatsApp';
 export const metadata: Metadata = {
   title: 'WebLift | Lift Your Business Online',
   description:
-    'WebLift helps small businesses build modern, professional websites that attract more local customers.'
+    'WebLift helps small businesses build modern, professional websites that attract more local customers.',
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg'
+  }
 };
 
 export default function RootLayout({

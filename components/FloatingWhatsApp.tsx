@@ -1,9 +1,9 @@
 export default function FloatingWhatsApp() {
   return (
     <a
-      href="https://wa.me/919000000000"
+      href="https://wa.me/917318643695"
       target="_blank"
-      rel="noreferrer"
+      rel="noopener noreferrer"
       aria-label="Chat on WhatsApp"
       className="fixed bottom-6 right-6 z-50 inline-flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-green-400 text-white shadow-2xl shadow-emerald-500/35 transition duration-300 hover:scale-110 hover:from-emerald-400 hover:to-lime-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50"
     >

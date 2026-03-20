@@ -51,7 +51,8 @@ export default function Footer() {
           <p className="text-sm font-semibold uppercase tracking-[0.15em] text-emerald-300">Contact</p>
           <ul className="mt-4 space-y-2 text-slate-400">
             <li>Email: hello@webliftstore.in</li>
-            <li>Phone: +91 90000 00000</li>
+            <li>Phone: +91 731 864 3695</li>
+            <li>Phone: +91 82505 69747</li>
             <li>Location: India</li>
           </ul>
         </div>
