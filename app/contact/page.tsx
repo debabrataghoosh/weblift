@@ -1,6 +1,7 @@
 import SectionTitle from '@/components/SectionTitle';
 import Reveal from '@/components/Reveal';
 import ContactForm from '@/components/ContactForm';
+import { Suspense } from 'react';
 
 export default function ContactPage() {
   return (
@@ -14,7 +15,9 @@ export default function ContactPage() {
       </Reveal>
 
       <Reveal delay={80}>
-        <ContactForm />
+        <Suspense fallback={null}>
+          <ContactForm />
+        </Suspense>
       </Reveal>
     </section>
   );
