@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import SectionTitle from '@/components/SectionTitle';
 import ServiceCard from '@/components/ServiceCard';
 import PortfolioCard from '@/components/PortfolioCard';
@@ -173,12 +174,85 @@ const testimonials = [
   }
 ];
 
+const faqs = [
+  {
+    question: 'How long does it take to launch my website?',
+    answer:
+      'Most starter websites are delivered in 3-5 days. Larger business websites usually take 5-10 days based on pages and features.'
+  },
+  {
+    question: 'Do I need technical knowledge to manage the website?',
+    answer:
+      'No technical skills are required. We set up an easy structure and guide you on basic edits so you can manage content smoothly.'
+  },
+  {
+    question: 'Can I add more features later?',
+    answer:
+      'Yes. You can start with a basic package and add features like payment, booking, or extra pages anytime as your business grows.'
+  }
+];
+
 export default function HomePage() {
   const scrollingTestimonials = [...testimonials, ...testimonials];
 
   return (
     <>
       <HeroSection />
+
+      <section className="container-block section-space">
+        <div className="grid items-center gap-10 lg:grid-cols-2">
+          <Reveal>
+            <div className="overflow-hidden rounded-3xl bg-white shadow-xl shadow-slate-300/70">
+              <Image
+                src="/Launch%20Your%20Website%20Without%20the%20Hassle.png"
+                alt="Launch your website without the hassle"
+                width={900}
+                height={900}
+                className="h-auto w-full rounded-2xl object-cover"
+                priority={false}
+              />
+            </div>
+          </Reveal>
+
+          <Reveal delay={80}>
+            <div>
+              <p className="mb-4 inline-flex rounded-full border border-emerald-300/30 bg-emerald-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">
+                Smart Setup
+              </p>
+              <h2 className="max-w-xl text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+                Launch your website without the hassle.
+              </h2>
+              <p className="mt-4 max-w-xl text-lg text-slate-600">
+                We handle design, setup, and optimization so your business can go online quickly and start collecting real leads.
+              </p>
+
+              <div className="mt-7 grid gap-3 sm:grid-cols-2">
+                {[
+                  'Fast setup with modern design',
+                  'Mobile-first and SEO-ready structure',
+                  'Easy contact + WhatsApp integration',
+                  'Ongoing support when you need it'
+                ].map((feature) => (
+                  <div
+                    key={feature}
+                    className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 shadow-sm shadow-slate-200/70"
+                  >
+                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
+                      ✓
+                    </span>
+                    {feature}
+                  </div>
+                ))}
+              </div>
+
+              <Link href="/contact" className="gradient-button mt-8 inline-flex items-center gap-2">
+                Get Started Now
+                <span aria-hidden>→</span>
+              </Link>
+            </div>
+          </Reveal>
+        </div>
+      </section>
 
       <section className="container-block section-space">
         <Reveal>
@@ -258,6 +332,47 @@ export default function HomePage() {
               </Reveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="container-block section-space">
+        <div className="grid items-center gap-10 lg:grid-cols-2">
+          <Reveal>
+            <div>
+              <p className="mb-4 inline-flex rounded-full border border-emerald-300/30 bg-emerald-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">
+                FAQs
+              </p>
+              <h2 className="max-w-xl text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+                Answers before you get started.
+              </h2>
+              <p className="mt-4 max-w-xl text-lg text-slate-600">
+                Everything you need to know about timelines, support, and how WebLift helps you launch faster.
+              </p>
+            </div>
+          </Reveal>
+
+          <Reveal delay={80}>
+            <div className="space-y-3">
+              {faqs.map((item, index) => (
+                <details
+                  key={item.question}
+                  className="group rounded-2xl border border-slate-200 bg-white p-5"
+                  open={index === 0}
+                >
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
+                    <span className="flex items-center gap-3 text-base font-semibold text-slate-900">
+                      <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500 text-xs font-bold text-white">
+                        {index + 1}
+                      </span>
+                      {item.question}
+                    </span>
+                    <span className="text-slate-500 transition group-open:rotate-180">⌄</span>
+                  </summary>
+                  <p className="mt-4 pl-10 text-sm leading-relaxed text-slate-600">{item.answer}</p>
+                </details>
+              ))}
+            </div>
+          </Reveal>
         </div>
       </section>
 

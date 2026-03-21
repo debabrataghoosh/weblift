@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import Reveal from '@/components/Reveal';
 import { AnimatedGridPattern } from '@/components/ui/animated-grid-pattern';
 
@@ -23,42 +24,50 @@ export default function HeroSection() {
           className="text-emerald-300/80 [mask-image:radial-gradient(680px_circle_at_center,white,transparent)]"
         />
 
-        <div className="container-block relative flex min-h-[calc(100vh-5rem)] items-center py-14 sm:py-20">
+        <div className="container-block relative flex min-h-[calc(100vh-5rem)] items-center pb-0 pt-14 sm:pt-20">
           <Reveal className="mx-auto w-full max-w-4xl text-center">
-            <p className="mb-6 inline-flex items-center rounded-full border border-emerald-300/30 bg-emerald-300/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-emerald-200">
-              WebLift
-            </p>
             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl lg:text-6xl">
-              Modern business websites made easy.
+              Cross-border quality websites made easy.
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-300">
               We help clinics, restaurants, gyms, and local brands launch high-converting websites without the usual hassle.
             </p>
 
-            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link href="/contact" className="gradient-button w-full sm:w-auto">
+            <div className="relative z-30 mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <Link
+                href="/contact"
+                className="gradient-button inline-flex h-14 w-full items-center justify-center px-8 text-base sm:w-auto sm:min-w-[210px]"
+              >
                 Create Website
               </Link>
               <Link
                 href="/portfolio"
-                className="w-full rounded-full border border-white/25 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition duration-300 hover:bg-white/15 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 sm:w-auto"
+                className="inline-flex h-14 w-full items-center justify-center rounded-full border border-emerald-300/35 bg-emerald-500/15 px-8 text-base font-semibold text-white transition duration-300 hover:bg-emerald-500/25 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 sm:w-auto sm:min-w-[210px]"
               >
                 View Work
               </Link>
             </div>
 
-            <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <div className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-left backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.14em] text-emerald-300">Industries</p>
-                <p className="mt-1 text-sm font-medium text-slate-100">Clinics, Gyms, Restaurants</p>
+            <div className="relative z-10 mx-auto -mt-14 w-full max-w-7xl sm:-mt-16">
+              <div className="absolute -left-4 top-8 z-20 hidden rounded-2xl border border-white/20 bg-white/95 px-4 py-3 text-left shadow-lg shadow-black/20 md:block">
+                <p className="text-xs text-slate-500">Total Projects</p>
+                <p className="text-2xl font-bold text-slate-900">120+</p>
               </div>
-              <div className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-left backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.14em] text-emerald-300">Focus</p>
-                <p className="mt-1 text-sm font-medium text-slate-100">Local lead generation</p>
+
+              <div className="absolute -right-4 top-12 z-20 hidden rounded-2xl border border-white/20 bg-white/95 px-4 py-3 text-left shadow-lg shadow-black/20 md:block">
+                <p className="text-xs text-slate-500">Client Rating</p>
+                <p className="text-2xl font-bold text-slate-900">4.9/5</p>
               </div>
-              <div className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-left backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.14em] text-emerald-300">Experience</p>
-                <p className="mt-1 text-sm font-medium text-slate-100">Premium fintech-style UI</p>
+
+              <div className="relative overflow-hidden">
+                <Image
+                  src="/hero-lpatop.png"
+                  alt="WebLift hero interface preview"
+                  width={1400}
+                  height={900}
+                  className="h-auto w-full object-cover"
+                  priority
+                />
               </div>
             </div>
           </Reveal>
