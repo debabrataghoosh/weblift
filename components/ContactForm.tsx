@@ -18,11 +18,18 @@ export default function ContactForm() {
       body: payload
     });
 
-    const result = (await response.json()) as { ok?: boolean; error?: string };
+    const result = (await response.json()) as { ok?: boolean; error?: string; fallbackMailto?: string };
 
-    if (!response.ok || !result.ok) {
-      throw new Error(result.error || 'Unable to submit form.');
+    if (!response.ok && result.fallbackMailto) {
+      window.location.href = result.fallbackMailto;
+      return { mode: 'mailto' as const };
     }
+
+    if (response.ok && result.ok) {
+      return { mode: 'server' as const };
+    }
+
+    throw new Error(result.error || 'Unable to submit form.');
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -74,13 +81,15 @@ export default function ContactForm() {
 
       payload.append('paymentStatus', paymentOption === 'qr' ? 'pending_verification' : 'pending');
 
-      await submitInquiry(payload);
+      const submitResult = await submitInquiry(payload);
 
       form.reset();
       setPaymentOption('pay_later');
       setShowQrFallback(false);
       setStatusMessage(
-        'Form submitted successfully. We will contact you soon.'
+        submitResult.mode === 'mailto'
+          ? 'Server email is unavailable. Your email app has been opened as fallback.'
+          : 'Form submitted successfully. We will contact you soon.'
       );
     } catch (error) {
       const submitError = error instanceof Error ? error.message : 'Unable to submit form.';

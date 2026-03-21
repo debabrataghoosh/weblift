@@ -44,6 +44,24 @@ textarea {
   transform: translateY(0);
 }
 
+.testimonial-marquee {
+  overflow: hidden;
+}
+
+.testimonial-marquee-track {
+  width: max-content;
+  animation: testimonial-marquee 34s linear infinite;
+}
+
+@keyframes testimonial-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html:focus-within {
     scroll-behavior: auto;
@@ -62,5 +80,9 @@ textarea {
   .reveal-visible {
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  .testimonial-marquee-track {
+    animation: none !important;
   }
 }

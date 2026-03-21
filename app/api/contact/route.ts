@@ -11,6 +11,12 @@ function requiredEnv(name: string) {
   return value;
 }
 
+function buildMailtoLink(toEmail: string, subject: string, lines: string[]) {
+  const encodedSubject = encodeURIComponent(subject);
+  const encodedBody = encodeURIComponent(lines.join('\n'));
+  return `mailto:${toEmail}?subject=${encodedSubject}&body=${encodedBody}`;
+}
+
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
@@ -43,22 +49,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const smtpHost = requiredEnv('SMTP_HOST');
-    const smtpPort = Number(requiredEnv('SMTP_PORT'));
-    const smtpUser = requiredEnv('SMTP_USER');
-    const smtpPass = requiredEnv('SMTP_PASS');
-    const fromEmail = process.env.FORM_FROM_EMAIL || smtpUser;
     const toEmail = process.env.FORM_TO_EMAIL || 'hello@webliftstore.in';
-
-    const transporter = nodemailer.createTransport({
-      host: smtpHost,
-      port: smtpPort,
-      secure: smtpPort === 465,
-      auth: {
-        user: smtpUser,
-        pass: smtpPass
-      }
-    });
 
     const paymentLabel = paymentOption === 'qr' ? 'QR Payment' : 'Pay Later';
     const subject =
@@ -88,6 +79,39 @@ export async function POST(request: Request) {
       'Message:',
       message || 'N/A'
     ];
+
+    const hasSmtpConfig =
+      Boolean(process.env.SMTP_HOST) &&
+      Boolean(process.env.SMTP_PORT) &&
+      Boolean(process.env.SMTP_USER) &&
+      Boolean(process.env.SMTP_PASS);
+
+    if (!hasSmtpConfig) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Email service is not configured on server. Opening email app as fallback.',
+          fallbackMailto: buildMailtoLink(toEmail, subject, lines)
+        },
+        { status: 503 }
+      );
+    }
+
+    const smtpHost = requiredEnv('SMTP_HOST');
+    const smtpPort = Number(requiredEnv('SMTP_PORT'));
+    const smtpUser = requiredEnv('SMTP_USER');
+    const smtpPass = requiredEnv('SMTP_PASS');
+    const fromEmail = process.env.FORM_FROM_EMAIL || smtpUser;
+
+    const transporter = nodemailer.createTransport({
+      host: smtpHost,
+      port: smtpPort,
+      secure: smtpPort === 465,
+      auth: {
+        user: smtpUser,
+        pass: smtpPass
+      }
+    });
 
     await transporter.sendMail({
       from: fromEmail,
